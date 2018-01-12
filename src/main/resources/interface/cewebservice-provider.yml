@@ -1,0 +1,268 @@
+swagger: '2.0'
+info:
+  description: Anthem Modernize Migration Microservices Provider API Documentation
+  version: '0.1'
+  title: Provider API Documentation
+  termsOfService: 'urn:tos'
+  contact: {}
+  license:
+    name: Apache 2.0
+    url: 'http://www.apache.org/licenses/LICENSE-2.0'
+host: 'localhost:8080'
+basePath: /webservices/provider
+tags:
+  - name: copybook
+    description: provider copybook
+paths:
+  '/api/v1/copybook':
+    post:
+      tags:
+        - copybook
+      summary: Provider Copybook
+      description: Provider Copybook
+      operationId: getProviderCopybook
+      consumes:
+        - application/json
+      produces:
+        - '*/*'
+      parameters:
+        - in: body
+          name: input
+          description: Copybook Request Data
+          required: true
+          schema:
+            $ref: '#/definitions/CopybookRequest'
+      responses:
+        '200':
+          description: Succuessful response
+          schema:
+            $ref: '#/definitions/CopybookResponse'
+        '404':
+          description: Data Not Found
+          schema:
+            $ref: '#/definitions/ErrorResponse'          
+        '415':
+          description: Request Validation Error  
+          schema:
+            $ref: '#/definitions/ErrorResponse'          
+        '500':
+          description: Internal Error
+definitions:
+  CopybookRequest:
+    type: object
+    required:
+      - serviceFromDate
+      - serviceThroughDate
+      - billingNumber
+      - renderingNumber
+      - providerLOBCode
+      - companyCode
+      - claimType
+      - exchangeIndicator
+      - conversionCode
+      - nationalProviderState
+      - providerDataSource
+      - hostStateId
+      - itemCode
+      - claimReceivedDate
+      - servicingProviderState
+    properties:
+      serviceFromDate:   
+        type: integer
+        format: int64
+        description: Service from date from the claim
+        maxLength: 9
+      serviceThroughDate:
+        type: integer
+        format: int64
+        description: Service through date from the claim
+        maxLength: 9
+      billingNumber: 
+        type: string
+        maxLength: 20
+        description: Billing number
+      renderingNumber:  
+        type: string
+        maxLength: 20
+        description: Rendering number
+      providerLOBCode:
+        type: string
+        maxLength: 8
+        description: Provider LOB code
+      companyCode:
+        type: string
+        maxLength: 4
+        description: Company code
+      claimType:  
+        type: string
+        maxLength: 2
+        description: Professional or hospital claims
+      exchangeIndicator:  
+        type: string
+        maxLength: 2
+        description: HIX or non-HIX claims
+      conversionCode:  
+        type: string
+        maxLength: 1
+        description: Conversion code of whether the member is from ACES, CHIPS or CS90
+      nationalProviderState:  
+        type: string
+        maxLength: 2
+        description: National provider state
+      providerDataSource:
+        type: string
+        maxLength: 1
+        description: Denotes of whether the provider resides in WGSP or not
+      hostStateId:  
+        type: string
+        maxLength: 5
+        description: ITS host state
+      itemCode:  
+        type: string
+        maxLength: 2
+        description: Regular or Adjusted claim
+      claimReceivedDate:  
+        type: integer
+        format: int64
+        maxLength: 9
+        description: Date on when the claim received first in WGS
+      servicingProviderState:  
+        type: string
+        maxLength: 2
+        description: Servicing provider state
+      taxOrInstitutionalId:  
+        type: string
+        maxLength: 4
+        description: Indicator to fetch Tax id or institutional id
+      billingType:  
+        type: string
+        maxLength: 2
+        description: Billing type of whether it is facet id or Medicare or Medicaid etc
+      billingState:  
+        type: string
+        maxLength: 2
+        description: Billing state
+      LicOrHmoId:  
+        type: string
+        maxLength: 4
+        description: Indicator to fetch LIC or HMO id
+      renderingType:  
+        type: string
+        maxLength: 2
+        description: Rendering type of whether it is facet id or Medicare or Medicaid etc
+      renderingState:  
+        type: string
+        maxLength: 2
+        description: Rendering state
+      wgspIndicatorEnable:  
+        type: string
+        maxLength: 1
+        description: Indicator to call the provider IO
+      wsgpIndicatorExclusion:  
+        type: string
+        maxLength: 1
+        description: Indicator to call the provider IO
+      systemName:  
+        type: string
+        maxLength: 8
+        description: To denote claims system or any other system
+      adjustmentSoruceDate:  
+        type: integer
+        format: int64
+        maxLength: 9
+        description: Date of the claim when the regular claim was finalized. Value required when claim is adjusted
+      claimMedicareOrLICDate:  
+        type: string
+        maxLength: 11
+        description: Original claim provider info
+      adjustmentReasonCode:  
+        type: string
+        maxLength: 3
+        description: Claim adjustment reason code       
+  CopybookResponse:      
+    type: object
+    properties:
+      billingData:
+        $ref: '#/definitions/BillingData'
+      billingStatusCode:
+        type: string
+        description: exceptions to handle edit and errors
+      renderingData:
+        $ref: '#/definitions/RenderingData'
+      renderingStatusCode:
+        type: string
+        description: exceptions to handle edit and errors
+      dataFromIndicator:
+        type: string
+        description:   To handle any exceptions
+      wsgpErrorCode:
+        type: string
+        description: To handle any exceptions
+  BillingData:
+    type: object
+    properties:
+      billiDate:  
+        type: array
+        items:
+          type: integer
+          format: int64  
+        description: Billing dates
+      billingKey:
+        type: string
+        description: Billing key
+      billingNumber:  
+        type: string
+        description: Tax id or Medicare id value
+      billingSource:  
+        type: string
+        description: Tax id or institutional id
+      billingState: 
+        type: string
+        description: Billing state
+      billingType:
+        type: string
+        description: Billing type
+  RenderingData:
+    type: object
+    properties:
+      renderingDate:  
+        type: array
+        items:
+          type: integer
+          format: int64  
+        description: Rendering dates
+      renderingKey:  
+        type: string
+        description: Rendering key
+      renderingNumber:  
+        type: string
+        description: LIC number
+      renderingSource:  
+        type: string
+        description: HMO or LIC or RTAX
+      renderingState:  
+        type: string
+        description: Rendering state
+      renderingStateCode:  
+        type: string
+        description: Provider rendering state code  
+      renderingType:  
+        type: string
+        description: To handle any exceptions
+  ErrorResponse:
+    type: object
+    properties:
+      error:
+        type: string
+      exception:
+        type: string
+      message:
+        type: string
+      path:
+        type: string
+      status:
+        type: integer
+        format: int32
+      timestamp:
+        type: string
+        format: date-time
